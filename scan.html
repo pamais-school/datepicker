@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scan Student QR</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <h3>Scan QR Code</h3>
+  <div id="reader" style="width:300px;"></div>
+  <script>
+    const html5QrCode = new Html5Qrcode("reader");
+    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+      // Send data to Telegram bot via WebApp API
+      Telegram.WebApp.sendData(decodedText);
+      html5QrCode.stop();
+    };
+    const config = { fps: 10, qrbox: 250 };
+    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+  </script>
+</body>
+</html>
