@@ -13,13 +13,13 @@ let currentLanguage = 'kh'; // Default to Khmer
 // Language data
 const translations = {
   kh: {
-    title: "ជ្រើសរើសថ្ងៃកំណើត",
+    title: "ជ្រើសរើសថ្ងៃកំណើតសិស្ស",
     dayLabel: "ថ្ងៃ",
     monthLabel: "ខែ",
     yearLabel: "ឆ្នាំ",
-    dayPlaceholder: "ជ្រើសរើសថ្ងៃ",
-    monthPlaceholder: "ជ្រើសរើសខែ",
-    yearPlaceholder: "ជ្រើសរើសឆ្នាំ",
+    dayPlaceholder: "ជ្រើសរើស",
+    monthPlaceholder: "ជ្រើសរើស",
+    yearPlaceholder: "ជ្រើសរើស",
     sendBtnText: "បញ្ជូន",
     followText: "តាមដានយើង",
     invalidDate: "កាលបរិច្ឆេទមិនត្រឹមត្រូវ",
@@ -33,13 +33,13 @@ const translations = {
     ]
   },
   en: {
-    title: "Select Date of Birth",
+    title: "Student date of birth",
     dayLabel: "Day",
     monthLabel: "Month",
     yearLabel: "Year",
-    dayPlaceholder: "Select Day",
-    monthPlaceholder: "Select Month",
-    yearPlaceholder: "Select Year",
+    dayPlaceholder: "Pick",
+    monthPlaceholder: "Pick",
+    yearPlaceholder: "Pick",
     sendBtnText: "Send",
     followText: "Follow Us",
     invalidDate: "Invalid date",
