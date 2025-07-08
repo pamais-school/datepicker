@@ -134,6 +134,7 @@
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 30px;
         }
 
         button {
@@ -236,17 +237,6 @@
             <p>Scan student QR codes to send data to Telegram</p>
         </div>
 
-        <div class="instructions">
-            <h3>📋 How to Use:</h3>
-            <ol>
-                <li><strong>Allow Camera Access:</strong> Grant permission when prompted</li>
-                <li><strong>Position QR Code:</strong> Hold the code within the camera frame</li>
-                <li><strong>Keep Steady:</strong> Hold your device steady for best results</li>
-                <li><strong>Wait for Scan:</strong> The scanner will automatically detect the code</li>
-                <li><strong>Data Sent:</strong> Result will be automatically sent to Telegram</li>
-            </ol>
-        </div>
-
         <div class="status scanning" id="status">
             <span class="loading"></span> Initializing camera...
         </div>
@@ -260,6 +250,17 @@
             <button id="startBtn" onclick="startScanning()">🚀 Start Scanning</button>
             <button id="stopBtn" onclick="stopScanning()" disabled>⏹️ Stop</button>
             <button id="restartBtn" onclick="restartScanning()" class="restart-btn" style="display: none;">🔄 Scan Again</button>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li><strong>Allow Camera Access:</strong> Grant permission when prompted</li>
+                <li><strong>Position QR Code:</strong> Hold the code within the camera frame</li>
+                <li><strong>Keep Steady:</strong> Hold your device steady for best results</li>
+                <li><strong>Wait for Scan:</strong> The scanner will automatically detect the code</li>
+                <li><strong>Data Sent:</strong> Result will be automatically sent to Telegram</li>
+            </ol>
         </div>
 
         <div id="result" class="result" style="display: none;">
