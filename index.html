@@ -9,28 +9,32 @@
 </head>
 <body>
   <div class="container">
+    <div class="language-toggle">
+      <button id="langBtn" class="lang-btn">🇺🇸 English</button>
+    </div>
+    
     <div class="icon">🎂</div>
-    <h2>ជ្រើសរើសថ្ងៃកំណើត</h2>
+    <h2 id="title">ជ្រើសរើសថ្ងៃកំណើត</h2>
     
     <div class="date-picker-wrapper">
       <div class="date-selector">
         <div class="date-row">
           <div>
-            <div class="date-label">ថ្ងៃ</div>
+            <div class="date-label" id="dayLabel">ថ្ងៃ</div>
             <select class="date-input" id="day">
-              <option value="">ជ្រើសរើសថ្ងៃ</option>
+              <option value="" id="dayPlaceholder">ជ្រើសរើសថ្ងៃ</option>
             </select>
           </div>
           <div>
-            <div class="date-label">ខែ</div>
+            <div class="date-label" id="monthLabel">ខែ</div>
             <select class="date-input" id="month">
-              <option value="">ជ្រើសរើសខែ</option>
+              <option value="" id="monthPlaceholder">ជ្រើសរើសខែ</option>
             </select>
           </div>
           <div>
-            <div class="date-label">ឆ្នាំ</div>
+            <div class="date-label" id="yearLabel">ឆ្នាំ</div>
             <select class="date-input" id="year">
-              <option value="">ជ្រើសរើសឆ្នាំ</option>
+              <option value="" id="yearPlaceholder">ជ្រើសរើសឆ្នាំ</option>
             </select>
           </div>
         </div>
@@ -40,8 +44,26 @@
     </div>
 
     <button id="sendBtn" disabled>
-      <span class="emoji">✨</span>បញ្ជូន
+      <span class="emoji">✨</span><span id="sendBtnText">បញ្ជូន</span>
     </button>
+
+    <div class="social-links">
+      <p id="followText">តាមដានយើង</p>
+      <div class="social-buttons">
+        <a href="https://t.me/+e_a7C4wxtBViZDU1" target="_blank" class="social-btn telegram">
+          <span class="social-icon">📱</span>
+          <span>Telegram</span>
+        </a>
+        <a href="https://www.youtube.com/@pamais" target="_blank" class="social-btn youtube">
+          <span class="social-icon">📺</span>
+          <span>YouTube</span>
+        </a>
+        <a href="https://web.facebook.com/pamainternationalschool" target="_blank" class="social-btn facebook">
+          <span class="social-icon">📘</span>
+          <span>Facebook</span>
+        </a>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
