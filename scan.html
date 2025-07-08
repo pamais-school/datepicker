@@ -1,21 +1,420 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Scan Student QR</title>
-  <script src="https://unpkg.com/html5-qrcode"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student QR Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .scanner-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        #reader {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #3498db;
+            background: #f8f9fa;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, transparent 40%, rgba(52, 152, 219, 0.1) 50%, transparent 60%);
+        }
+
+        .instructions {
+            background: #ecf0f1;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions ol {
+            color: #34495e;
+            font-size: 14px;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .status.scanning {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 2px solid #bbdefb;
+        }
+
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 2px solid #c8e6c9;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ffcdd2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .restart-btn {
+            background: #e74c3c;
+        }
+
+        .restart-btn:hover {
+            background: #c0392b;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .result h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .result p {
+            color: #34495e;
+            font-size: 13px;
+            word-break: break-all;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .icon {
+            font-size: 18px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h3>Scan QR Code</h3>
-  <div id="reader" style="width:300px;"></div>
-  <script>
-    const html5QrCode = new Html5Qrcode("reader");
-    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-      // Send data to Telegram bot via WebApp API
-      Telegram.WebApp.sendData(decodedText);
-      html5QrCode.stop();
-    };
-    const config = { fps: 10, qrbox: 250 };
-    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-  </script>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Student QR Scanner</h1>
+            <p>Scan student QR codes to send data to Telegram</p>
+        </div>
+
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li><strong>Allow Camera Access:</strong> Grant permission when prompted</li>
+                <li><strong>Position QR Code:</strong> Hold the code within the camera frame</li>
+                <li><strong>Keep Steady:</strong> Hold your device steady for best results</li>
+                <li><strong>Wait for Scan:</strong> The scanner will automatically detect the code</li>
+                <li><strong>Data Sent:</strong> Result will be automatically sent to Telegram</li>
+            </ol>
+        </div>
+
+        <div class="status scanning" id="status">
+            <span class="loading"></span> Initializing camera...
+        </div>
+
+        <div class="scanner-container">
+            <div id="reader"></div>
+            <div class="scanner-overlay"></div>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" onclick="startScanning()">🚀 Start Scanning</button>
+            <button id="stopBtn" onclick="stopScanning()" disabled>⏹️ Stop</button>
+            <button id="restartBtn" onclick="restartScanning()" class="restart-btn" style="display: none;">🔄 Scan Again</button>
+        </div>
+
+        <div id="result" class="result" style="display: none;">
+            <h4>📄 Scanned Data:</h4>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <script>
+        let html5QrCode;
+        let isScanning = false;
+        
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const resultEl = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+
+        // Initialize Telegram WebApp
+        if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+        }
+
+        function updateStatus(message, type = 'scanning') {
+            statusEl.innerHTML = message;
+            statusEl.className = `status ${type}`;
+        }
+
+        function startScanning() {
+            if (isScanning) return;
+            
+            html5QrCode = new Html5Qrcode("reader");
+            
+            updateStatus('<span class="loading"></span> Starting camera...', 'scanning');
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            restartBtn.style.display = 'none';
+            resultEl.style.display = 'none';
+
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0,
+                disableFlip: false
+            };
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                qrCodeSuccessCallback,
+                qrCodeErrorCallback
+            ).then(() => {
+                isScanning = true;
+                updateStatus('📱 Ready to scan! Point camera at QR code', 'scanning');
+            }).catch(err => {
+                console.error('Error starting scanner:', err);
+                updateStatus('❌ Camera access denied or not available', 'error');
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            });
+        }
+
+        function stopScanning() {
+            if (!isScanning || !html5QrCode) return;
+            
+            html5QrCode.stop().then(() => {
+                isScanning = false;
+                updateStatus('⏹️ Scanner stopped', 'scanning');
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                restartBtn.style.display = 'inline-block';
+            }).catch(err => {
+                console.error('Error stopping scanner:', err);
+            });
+        }
+
+        function restartScanning() {
+            stopScanning();
+            setTimeout(() => {
+                startScanning();
+            }, 500);
+        }
+
+        function qrCodeSuccessCallback(decodedText, decodedResult) {
+            console.log('QR Code scanned:', decodedText);
+            
+            // Stop scanning immediately after successful scan
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    isScanning = false;
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                    restartBtn.style.display = 'inline-block';
+                }).catch(err => {
+                    console.error('Error stopping scanner:', err);
+                });
+            }
+
+            // Show success status
+            updateStatus('✅ QR Code scanned successfully!', 'success');
+            
+            // Display result
+            resultText.textContent = decodedText;
+            resultEl.style.display = 'block';
+
+            // Send to Telegram
+            sendToTelegram(decodedText);
+        }
+
+        function qrCodeErrorCallback(error) {
+            // Don't log every frame error, just keep scanning
+            if (isScanning) {
+                updateStatus('📱 Scanning... Point camera at QR code', 'scanning');
+            }
+        }
+
+        function sendToTelegram(data) {
+            try {
+                if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                    // Send data to Telegram bot
+                    Telegram.WebApp.sendData(data);
+                    
+                    // Show success message
+                    updateStatus('📨 Data sent to Telegram successfully!', 'success');
+                    
+                    // Optional: Close the WebApp after sending
+                    setTimeout(() => {
+                        Telegram.WebApp.close();
+                    }, 2000);
+                } else {
+                    // Fallback if not in Telegram WebApp
+                    console.log('Telegram WebApp not available. Data:', data);
+                    updateStatus('⚠️ Telegram WebApp not available (testing mode)', 'error');
+                }
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+                updateStatus('❌ Error sending to Telegram', 'error');
+            }
+        }
+
+        // Auto-start scanning when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                startScanning();
+            }, 500);
+        });
+
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isScanning) {
+                stopScanning();
+            }
+        });
+    </script>
 </body>
 </html>
