@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ជ្រើសរើសថ្ងៃកំណើត</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🎂</div>
+    <h2>ជ្រើសរើសថ្ងៃកំណើត</h2>
+    <div class="input-wrapper">
+      <input type="date" id="dob" max="" />
+    </div>
+    <button id="sendBtn" disabled>
+      <span class="emoji">✨</span>បញ្ជូន
+    </button>
+  </div>
+
+  <script>
+    const Telegram = window.Telegram.WebApp;
+    const dobInput = document.getElementById("dob");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // Set max date to today
+    const today = new Date().toISOString().split("T")[0];
+    dobInput.setAttribute("max", today);
+
+    // Enable button on valid input
+    dobInput.addEventListener("input", () => {
+      sendBtn.disabled = !dobInput.value;
+      if (dobInput.value) {
+        sendBtn.style.background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+      }
+    });
+
+    sendBtn.addEventListener("click", () => {
+      if (!dobInput.value) return;
+
+      sendBtn.classList.add("loading");
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span class="emoji">⏳</span>កំពុងបញ្ជូន...';
+
+      setTimeout(() => {
+        Telegram.sendData(dobInput.value);
+        Telegram.close();
+      }, 500);
+    });
+
+    Telegram.expand();
+  </script>
+</body>
+</html>
