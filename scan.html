@@ -383,7 +383,7 @@
             try {
                 if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
                     // Send as JSON string
-                    Telegram.WebApp.sendData(data);
+                    Telegram.WebApp.sendData(JSON.stringify({ student_id: data }));
                     updateStatus('📨 Data sent to Telegram successfully!', 'success');
                     setTimeout(() => {
                         Telegram.WebApp.close();
