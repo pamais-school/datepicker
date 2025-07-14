@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR Code Scanner</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -27,7 +27,7 @@
     .container {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
       padding: 30px;
       max-width: 400px;
       width: 100%;
@@ -72,12 +72,7 @@
       bottom: 0;
       pointer-events: none;
       border-radius: 15px;
-      background: linear-gradient(
-        45deg,
-        transparent 40%,
-        rgba(52, 152, 219, 0.1) 50%,
-        transparent 60%
-      );
+      background: linear-gradient(45deg, transparent 40%, rgba(52, 152, 219, 0.1) 50%, transparent 60%);
     }
 
     .instructions {
@@ -193,7 +188,7 @@
     .result p {
       color: #34495e;
       font-size: 13px;
-      word-break: break-word;
+      word-break: break-all;
       background: white;
       padding: 10px;
       border-radius: 5px;
@@ -211,13 +206,8 @@
     }
 
     @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @media (max-width: 480px) {
@@ -351,17 +341,13 @@
       }, 500);
     }
 
-    function qrCodeSuccessCallback(decodedText, decodedResult) {
-      console.log('QR Code scanned:', decodedText);
-
+    function qrCodeSuccessCallback(decodedText) {
       if (html5QrCode && isScanning) {
         html5QrCode.stop().then(() => {
           isScanning = false;
           startBtn.disabled = false;
           stopBtn.disabled = true;
           restartBtn.style.display = 'inline-block';
-        }).catch(err => {
-          console.error('Error stopping scanner:', err);
         });
       }
 
@@ -372,7 +358,7 @@
       sendToTelegram(decodedText);
     }
 
-    function qrCodeErrorCallback(error) {
+    function qrCodeErrorCallback() {
       if (isScanning) {
         updateStatus('📱 Scanning... Point camera at QR code', 'scanning');
       }
@@ -381,7 +367,7 @@
     function sendToTelegram(data) {
       try {
         if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
-          Telegram.WebApp.sendData(JSON.stringify({ qr_data: data }));
+          Telegram.WebApp.sendData(JSON.stringify({ student_id: data }));
           updateStatus('📨 Data sent to Telegram successfully!', 'success');
           setTimeout(() => {
             Telegram.WebApp.close();
