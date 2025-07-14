@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>QR Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Scanner</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,7 +27,7 @@
     .container {
       background: white;
       border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       padding: 30px;
       max-width: 400px;
       width: 100%;
@@ -62,10 +66,18 @@
 
     .scanner-overlay {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       pointer-events: none;
       border-radius: 15px;
-      background: linear-gradient(45deg, transparent 40%, rgba(52, 152, 219, 0.1) 50%, transparent 60%);
+      background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(52, 152, 219, 0.1) 50%,
+        transparent 60%
+      );
     }
 
     .instructions {
@@ -181,7 +193,7 @@
     .result p {
       color: #34495e;
       font-size: 13px;
-      word-break: break-all;
+      word-break: break-word;
       background: white;
       padding: 10px;
       border-radius: 5px;
@@ -199,8 +211,13 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     @media (max-width: 480px) {
@@ -223,7 +240,7 @@
   <div class="container">
     <div class="header">
       <h1>📱 QR Code Scanner</h1>
-      <p>Scan QR codes and send data directly via Telegram</p>
+      <p>Scan QR codes to send data to Telegram</p>
     </div>
 
     <div class="status scanning" id="status">
@@ -334,7 +351,9 @@
       }, 500);
     }
 
-    function qrCodeSuccessCallback(decodedText) {
+    function qrCodeSuccessCallback(decodedText, decodedResult) {
+      console.log('QR Code scanned:', decodedText);
+
       if (html5QrCode && isScanning) {
         html5QrCode.stop().then(() => {
           isScanning = false;
@@ -349,10 +368,11 @@
       updateStatus('✅ QR Code scanned successfully!', 'success');
       resultText.textContent = decodedText;
       resultEl.style.display = 'block';
+
       sendToTelegram(decodedText);
     }
 
-    function qrCodeErrorCallback() {
+    function qrCodeErrorCallback(error) {
       if (isScanning) {
         updateStatus('📱 Scanning... Point camera at QR code', 'scanning');
       }
@@ -363,7 +383,9 @@
         if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
           Telegram.WebApp.sendData(JSON.stringify({ qr_data: data }));
           updateStatus('📨 Data sent to Telegram successfully!', 'success');
-          setTimeout(() => Telegram.WebApp.close(), 2000);
+          setTimeout(() => {
+            Telegram.WebApp.close();
+          }, 2000);
         } else {
           console.log('Telegram WebApp not available. Data:', data);
           updateStatus('⚠️ Telegram WebApp not available (testing mode)', 'error');
@@ -374,25 +396,10 @@
       }
     }
 
-    window.addEventListener('load', async () => {
-      try {
-        const result = await navigator.permissions.query({ name: 'camera' });
-        if (result.state === 'granted') {
-          startScanning();
-        } else {
-          updateStatus('📸 Please allow camera to start scanning', 'scanning');
-          startBtn.disabled = false;
-        }
-
-        result.onchange = () => {
-          if (result.state === 'granted') {
-            startScanning();
-          }
-        };
-      } catch (e) {
-        console.warn('Permissions API not supported. Fallback to start.');
-        setTimeout(() => startScanning(), 500);
-      }
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        startScanning();
+      }, 500);
     });
 
     document.addEventListener('visibilitychange', () => {
